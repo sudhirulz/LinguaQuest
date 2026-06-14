@@ -20,6 +20,7 @@ This is a personal project — not affiliated with any institution, no commercia
 - **Resources** — official archives, YouTube channels, books, and tools, all in one place.
 - **About** — a bit about me and why this exists.
 - **Feedback** — a Google Form for broken links or suggestions.
+Also includes an Admin page to add new problems that will be categorized into types to show up in the problem bank
 
 ---
 
