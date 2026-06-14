@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LQ Admin — Problem Bank Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --violet:#4f46e5;--vd:#3730a3;--vl:#eef2ff;--vb:#c4b5fd;
+  --bg:#f8f7ff;--sur:#fff;--bdr:#e5e4f0;
+  --ink:#1e1b4b;--ink2:#4c4a6e;--ink3:#7c7a9e;
+  --green:#059669;--gl:#ecfdf5;--amber:#d97706;--al:#fffbeb;
+  --rose:#e11d48;--rl:#fff1f2;--r:12px;
+  --shadow:0 2px 20px rgba(79,70,229,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+
+/* LOGIN */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#eeeef8,#e8e6ff);}
+.lbox{background:#fff;border-radius:20px;padding:2.5rem 2rem;box-shadow:0 8px 40px rgba(79,70,229,.15);width:100%;max-width:360px;text-align:center;}
+.llq{display:inline-flex;align-items:center;justify-content:center;background:var(--violet);color:#fff;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.3rem;width:52px;height:52px;border-radius:13px;margin-bottom:1rem;}
+.lbox h1{font-family:'DM Serif Display',serif;font-size:1.35rem;margin-bottom:.2rem;}
+.lbox p{font-size:.82rem;color:var(--ink3);margin-bottom:1.4rem;}
+.lfield{width:100%;font-family:'Inter',sans-serif;font-size:.9rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--bdr);border-radius:9px;padding:.7rem 1rem;outline:none;margin-bottom:.7rem;transition:border-color .2s;}
+.lfield:focus{border-color:var(--violet);background:#fff;}
+.lbtn{width:100%;background:var(--violet);color:#fff;font-family:'Inter',sans-serif;font-weight:600;font-size:.95rem;padding:.8rem;border-radius:9px;border:none;cursor:pointer;transition:background .2s;}
+.lbtn:hover{background:var(--vd);}
+.lerr{display:none;background:var(--rl);color:var(--rose);font-size:.8rem;border-radius:7px;padding:.55rem .9rem;margin-bottom:.7rem;}
+.lerr.show{display:block;}
+
+/* APP */
+#app{display:none;}
+#app.show{display:block;}
+nav{background:#fff;border-bottom:1px solid var(--bdr);padding:0 2rem;display:flex;align-items:center;gap:1rem;height:54px;position:sticky;top:0;z-index:100;}
+.nlq{background:var(--violet);color:#fff;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.8rem;padding:.28rem .65rem;border-radius:7px;}
+nav span{font-size:.82rem;color:var(--ink3);}
+.nout{margin-left:auto;background:none;border:1.5px solid var(--bdr);color:var(--ink3);font-family:'Inter',sans-serif;font-size:.78rem;padding:.32rem .75rem;border-radius:7px;cursor:pointer;transition:border-color .2s,color .2s;}
+.nout:hover{border-color:var(--rose);color:var(--rose);}
+.main{max-width:880px;margin:0 auto;padding:2rem 1.25rem;}
+.ptitle{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:.25rem;}
+.psub{font-size:.83rem;color:var(--ink3);margin-bottom:1.5rem;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem;margin-bottom:1.5rem;}
+.scard{background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:.9rem;text-align:center;}
+.snum{font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--violet);}
+.slbl{font-size:.65rem;color:var(--ink3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;margin-top:.15rem;}
+
+/* TABS */
+.tabs{display:flex;gap:.2rem;background:#fff;border:1px solid var(--bdr);border-radius:9px;padding:.28rem;width:fit-content;margin-bottom:1.4rem;}
+.tab{font-size:.82rem;font-weight:500;padding:.42rem 1rem;border-radius:6px;border:none;background:none;color:var(--ink3);cursor:pointer;transition:all .15s;}
+.tab.active{background:var(--violet);color:#fff;font-weight:600;}
+.tc{display:none;}
+.tc.active{display:block;}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);padding:1.4rem;box-shadow:var(--shadow);margin-bottom:1.15rem;}
+.card h2{font-family:'DM Serif Display',serif;font-size:1.05rem;margin-bottom:1rem;}
+
+/* FORM */
+label.fl{display:block;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:.32rem;}
+.fi{width:100%;font-family:'Inter',sans-serif;font-size:.87rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--bdr);border-radius:8px;padding:.6rem .85rem;outline:none;transition:border-color .2s;}
+.fi:focus{border-color:var(--violet);background:#fff;}
+select.fi{cursor:pointer;}
+textarea.fi{resize:vertical;min-height:180px;line-height:1.6;}
+.frow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;margin-bottom:1rem;}
+.fgroup{margin-bottom:1rem;}
+.hint{font-size:.75rem;color:var(--ink3);margin-top:.3rem;}
+
+/* URL INPUT WITH DETECTION */
+.url-wrap{position:relative;}
+.url-tag{position:absolute;right:.6rem;top:50%;transform:translateY(-50%);font-size:.68rem;font-weight:600;padding:.18rem .5rem;border-radius:5px;pointer-events:none;display:none;}
+.url-tag.drive{background:#e8f5e9;color:#2e7d32;display:block;}
+.url-tag.github{background:#f3e8ff;color:#6b21a8;display:block;}
+.url-tag.direct{background:var(--vl);color:var(--violet);display:block;}
+.url-preview{display:none;background:var(--gl);border:1px solid #86efac;border-radius:8px;padding:.6rem .85rem;margin-top:.4rem;font-size:.78rem;color:#15803d;font-family:'JetBrains Mono',monospace;word-break:break-all;}
+.url-preview.show{display:block;}
+.url-preview.warn{background:var(--al);border-color:#fcd34d;color:#92400e;}
+
+/* UPLOAD MODES */
+.utabs{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap;}
+.utab{font-size:.82rem;font-weight:500;padding:.45rem 1.1rem;border-radius:999px;border:1.5px solid var(--bdr);background:#fff;color:var(--ink3);cursor:pointer;transition:all .15s;}
+.utab.active{background:var(--violet);color:#fff;border-color:var(--violet);}
+.utab:hover:not(.active){border-color:var(--violet);color:var(--violet);}
+
+/* DROP ZONE */
+.dz{border:2px dashed var(--bdr);border-radius:10px;padding:2.25rem 1rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:var(--bg);}
+.dz:hover,.dz.over{border-color:var(--violet);background:var(--vl);}
+.dz p{font-size:.84rem;color:var(--ink3);margin-top:.4rem;}
+.fc{font-size:.82rem;color:var(--green);font-weight:600;margin-top:.4rem;display:none;}
+
+/* PDF HOSTING OPTIONS */
+.hosting-panel{background:#f8f7ff;border:1px solid var(--bdr);border-radius:10px;padding:1rem 1.1rem;margin-top:.85rem;}
+.hosting-panel h3{font-size:.8rem;font-weight:600;color:var(--ink);margin-bottom:.7rem;}
+.hosting-opts{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.85rem;}
+.hopt{border:1.5px solid var(--bdr);border-radius:8px;padding:.7rem .85rem;cursor:pointer;transition:border-color .15s,background .15s;background:#fff;}
+.hopt:hover{border-color:var(--violet);}
+.hopt.selected{border-color:var(--violet);background:var(--vl);}
+.hopt-title{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:.15rem;}
+.hopt-desc{font-size:.73rem;color:var(--ink3);line-height:1.4;}
+.hopt-badge{display:inline-block;font-size:.62rem;font-weight:600;padding:.1rem .4rem;border-radius:4px;margin-bottom:.3rem;}
+.badge-easy{background:var(--gl);color:var(--green);}
+.badge-req{background:var(--al);color:var(--amber);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--violet);color:#fff;font-family:'Inter',sans-serif;font-weight:600;font-size:.87rem;padding:.68rem 1.35rem;border-radius:999px;border:none;cursor:pointer;transition:background .2s,transform .1s;}
+.btn:hover{background:var(--vd);}
+.btn:active{transform:scale(.98);}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+.btn-ghost{background:#fff;color:var(--violet);border:1.5px solid var(--violet);}
+.btn-ghost:hover{background:var(--vl);}
+.btn-green{background:var(--green);}
+.btn-green:hover{background:#047857;}
+.brow{display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;margin-top:1.15rem;}
+
+/* PROGRESS */
+.prog{display:none;margin:1rem 0;}
+.prog.show{display:block;}
+.pbg{background:var(--bdr);border-radius:999px;height:5px;overflow:hidden;margin-bottom:.45rem;}
+.pfill{background:var(--violet);height:100%;border-radius:999px;width:0%;transition:width .4s ease;}
+.plbl{font-size:.77rem;color:var(--ink3);}
+
+/* RESULTS */
+.rlist{display:flex;flex-direction:column;gap:.7rem;}
+.ritem{border:1.5px solid var(--bdr);border-radius:10px;padding:1rem 1.1rem;background:#fff;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.ritem.ok{border-color:#86efac;}
+.rhead{display:flex;align-items:center;gap:.55rem;margin-bottom:.5rem;flex-wrap:wrap;}
+.rtitle{font-weight:600;font-size:.87rem;}
+.bdg{display:inline-block;padding:.17rem .55rem;border-radius:999px;font-size:.7rem;font-weight:600;}
+.bt{background:var(--vl);color:var(--violet);}
+.be{background:var(--gl);color:var(--green);}
+.bm{background:var(--al);color:var(--amber);}
+.bh{background:var(--rl);color:var(--rose);}
+.bc{background:#f0f9ff;color:#0369a1;}
+.rreason{font-size:.79rem;color:var(--ink2);line-height:1.55;margin-bottom:.65rem;}
+.rcode{background:#1e1b4b;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:.71rem;border-radius:8px;padding:.8rem 1rem;overflow-x:auto;line-height:1.65;white-space:pre;position:relative;}
+.cpbtn{position:absolute;top:.45rem;right:.45rem;background:rgba(255,255,255,.12);color:#a5b4fc;border:none;border-radius:5px;padding:.22rem .52rem;font-family:'JetBrains Mono',monospace;font-size:.64rem;cursor:pointer;}
+.cpbtn:hover{background:rgba(255,255,255,.22);}
+
+/* BANK TABLE */
+.btbl{width:100%;border-collapse:collapse;font-size:.81rem;}
+.btbl th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:.59rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:.48rem .7rem;border-bottom:2px solid var(--bdr);}
+.btbl td{padding:.58rem .7rem;border-bottom:1px solid var(--bdr);color:var(--ink2);vertical-align:middle;}
+.btbl tr:hover td{background:var(--bg);}
+.delbtn{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.88rem;padding:.18rem .38rem;border-radius:4px;}
+.delbtn:hover{color:var(--rose);}
+.empty{text-align:center;padding:2.5rem;color:var(--ink3);font-size:.87rem;}
+
+/* EXPORT */
+.ebox{background:#1e1b4b;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:.72rem;border-radius:10px;padding:1.2rem;overflow-x:auto;line-height:1.7;white-space:pre;max-height:380px;overflow-y:auto;}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;}
+@keyframes sp{to{transform:rotate(360deg)}}
+.divider{border:none;border-top:1px solid var(--bdr);margin:.9rem 0;}
+@media(max-width:600px){.frow,.stats{grid-template-columns:1fr}.hosting-opts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="lbox">
+    <div class="llq">LQ</div>
+    <h1>Admin Login</h1>
+    <p>LinguaQuest Problem Bank Manager</p>
+    <div class="lerr" id="lerr">Incorrect credentials.</div>
+    <input class="lfield" type="text" id="lu" placeholder="Username" autocomplete="username">
+    <input class="lfield" type="password" id="lp" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="lbtn" onclick="doLogin()">Sign in →</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav>
+    <div class="nlq">LQ</div>
+    <span>Admin · Problem Bank Manager</span>
+    <button class="nout" onclick="logout()">Sign out</button>
+  </nav>
+
+  <div class="main">
+    <h1 class="ptitle">Problem Bank Manager</h1>
+    <p class="psub">Upload a PDF or paste text — Claude categorises every problem. Attach a hosted PDF link so it appears in the site's problem table.</p>
+
+    <div class="stats">
+      <div class="scard"><div class="snum" id="st0">0</div><div class="slbl">In Bank</div></div>
+      <div class="scard"><div class="snum" id="st1">0</div><div class="slbl">Competitions</div></div>
+      <div class="scard"><div class="snum" id="st2">0</div><div class="slbl">Types</div></div>
+      <div class="scard"><div class="snum" id="st3">0</div><div class="slbl">This Session</div></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('cat',this)">✦ Categorise</button>
+      <button class="tab" onclick="switchTab('bank',this)">📋 Problem Bank</button>
+      <button class="tab" onclick="switchTab('exp',this)">⬇ Export</button>
+    </div>
+
+    <!-- ── CATEGORISE ── -->
+    <div class="tc active" id="tc-cat">
+
+      <!-- Step 1: Meta -->
+      <div class="card">
+        <h2>① Problem details <span style="font-family:'Inter',sans-serif;font-size:.78rem;font-weight:400;color:var(--ink3);">— all optional, Claude infers from content</span></h2>
+        <div class="frow">
+          <div>
+            <label class="fl">Competition</label>
+            <select id="comp" class="fi">
+              <option value="">Unknown / Various</option>
+              <option>IOL</option><option>APLO</option><option>PLO</option>
+              <option>NACLO</option><option>UKLO</option><option>ELCO</option>
+              <option>RuLO</option><option>OzCLO</option><option>SLO</option>
+              <option>LMnO</option><option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="fl">Year</label>
+            <input type="number" id="year" class="fi" placeholder="e.g. 2024" min="1990" max="2030">
+          </div>
+          <div>
+            <label class="fl">Round / Stage</label>
+            <input type="text" id="round" class="fi" placeholder="e.g. Individual, Team">
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Upload -->
+      <div class="card">
+        <h2>② Upload problem content</h2>
+        <div class="utabs">
+          <button class="utab active" onclick="setMode('pdf',this)">📄 Upload PDF</button>
+          <button class="utab" onclick="setMode('text',this)">✏️ Paste / Type text</button>
+        </div>
+
+        <div id="m-pdf">
+          <div class="dz" id="dz" onclick="document.getElementById('fi').click()"
+            ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event)">
+            <div style="font-size:1.8rem">📄</div>
+            <p><strong style="color:var(--ink2);">Click to upload</strong> or drag and drop a PDF</p>
+            <p style="font-size:.75rem;margin-top:.2rem;">Entire competition booklets work — Claude extracts every problem</p>
+            <input type="file" id="fi" accept=".pdf" style="display:none" onchange="fileSelect(event)">
+          </div>
+          <p class="fc" id="fc"></p>
+        </div>
+
+        <div id="m-text" style="display:none;">
+          <label class="fl">Problem text</label>
+          <textarea id="ptxt" class="fi" placeholder="Paste or type the full problem — question, data tables, word lists, everything."></textarea>
+          <p class="hint">Include the question number, all data, sub-questions, and any solution if available.</p>
+        </div>
+      </div>
+
+      <!-- Step 3: PDF link for the site -->
+      <div class="card">
+        <h2>③ Where is this PDF hosted? <span style="font-family:'Inter',sans-serif;font-size:.78rem;font-weight:400;color:var(--ink3);">— this is the link users click to open the problem</span></h2>
+
+        <div class="hosting-opts">
+          <div class="hopt selected" id="hopt-drive" onclick="selectHosting('drive',this)">
+            <span class="hopt-badge badge-easy">Easiest</span>
+            <div class="hopt-title">📁 Google Drive</div>
+            <div class="hopt-desc">Upload PDF to Drive → share → paste the link here. We auto-format it for the site.</div>
+          </div>
+          <div class="hopt" id="hopt-github" onclick="selectHosting('github',this)">
+            <span class="hopt-badge badge-req">Needs setup</span>
+            <div class="hopt-title">🐙 GitHub repo</div>
+            <div class="hopt-desc">Add PDF to your <code style="font-size:.7rem;">/pdfs</code> folder in the LinguaQuest repo. URL auto-generated.</div>
+          </div>
+          <div class="hopt" id="hopt-direct" onclick="selectHosting('direct',this)">
+            <span class="hopt-badge badge-easy">Direct</span>
+            <div class="hopt-title">🔗 Direct URL</div>
+            <div class="hopt-desc">Already have a direct PDF link (e.g. from ioling.org)? Paste it straight in.</div>
+          </div>
+          <div class="hopt" id="hopt-none" onclick="selectHosting('none',this)">
+            <span class="hopt-badge" style="background:var(--bg);color:var(--ink3);">Skip</span>
+            <div class="hopt-title">⊘ No PDF link</div>
+            <div class="hopt-desc">Categorise now, add a PDF link later when you have one.</div>
+          </div>
+        </div>
+
+        <!-- Drive input -->
+        <div id="hi-drive">
+          <label class="fl">Paste your Google Drive share link</label>
+          <div class="url-wrap">
+            <input type="text" id="url-drive" class="fi" placeholder="https://drive.google.com/file/d/…/view?usp=sharing"
+              oninput="onDriveInput(this.value)" style="padding-right:5rem;">
+            <span class="url-tag drive" id="tag-drive">Drive ✓</span>
+          </div>
+          <div class="url-preview" id="prev-drive"></div>
+          <p class="hint" style="margin-top:.4rem;">
+            In Drive: right-click the PDF → <strong>Share</strong> → <strong>Anyone with the link</strong> → Copy link. We convert it to an embeddable URL automatically.
+          </p>
+        </div>
+
+        <!-- GitHub input -->
+        <div id="hi-github" style="display:none;">
+          <label class="fl">PDF filename in your /pdfs folder</label>
+          <div class="url-wrap">
+            <input type="text" id="url-github" class="fi" placeholder="e.g. iol-2024-individual.pdf"
+              oninput="onGithubInput(this.value)" style="padding-right:5.5rem;">
+            <span class="url-tag github">GitHub ✓</span>
+          </div>
+          <div class="url-preview" id="prev-github"></div>
+          <p class="hint" style="margin-top:.4rem;">
+            First add the PDF to your repo at <code style="font-size:.75rem;">github.com/sudhirulz/LinguaQuest</code> → create a <code style="font-size:.75rem;">pdfs/</code> folder → upload the file → commit. Then enter the filename here.
+          </p>
+        </div>
+
+        <!-- Direct URL input -->
+        <div id="hi-direct" style="display:none;">
+          <label class="fl">Direct PDF URL</label>
+          <div class="url-wrap">
+            <input type="text" id="url-direct" class="fi" placeholder="https://ioling.org/booklets/iol-2024-indiv-prob.en.pdf"
+              oninput="onDirectInput(this.value)" style="padding-right:5rem;">
+            <span class="url-tag direct" id="tag-direct"></span>
+          </div>
+          <div class="url-preview" id="prev-direct"></div>
+        </div>
+
+        <!-- None -->
+        <div id="hi-none" style="display:none;">
+          <p style="font-size:.83rem;color:var(--ink3);padding:.5rem 0;">No PDF link — the bank entry will have an empty pdf field. You can update it later by editing the exported code.</p>
+        </div>
+      </div>
+
+      <!-- Categorise button -->
+      <div class="brow" style="margin-bottom:1.5rem;">
+        <button class="btn" id="catBtn" onclick="doCategorise()">
+          <span id="bIcon">✦</span> <span id="bLbl">Categorise with Claude</span>
+        </button>
+        <button class="btn btn-ghost" onclick="resetForm()">Reset</button>
+      </div>
+
+      <!-- Progress -->
+      <div class="prog" id="prog">
+        <div class="pbg"><div class="pfill" id="pbar"></div></div>
+        <div class="plbl" id="plbl">Sending to Claude…</div>
+      </div>
+
+      <!-- Results -->
+      <div id="rarea" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;">
+          <h2 style="font-family:'DM Serif Display',serif;font-size:1.05rem;">Tagged Problems</h2>
+          <button class="btn btn-green" onclick="addAll()">+ Add All to Bank</button>
+        </div>
+        <div class="rlist" id="rlist"></div>
+      </div>
+    </div>
+
+    <!-- ── BANK ── -->
+    <div class="tc" id="tc-bank">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <h2 style="margin-bottom:0;">Saved Problems</h2>
+          <button class="btn btn-ghost" style="font-size:.77rem;padding:.38rem .85rem;" onclick="clearBank()">Clear all</button>
+        </div>
+        <div id="btblwrap"><div class="empty">No problems yet — categorise some first.</div></div>
+      </div>
+    </div>
+
+    <!-- ── EXPORT ── -->
+    <div class="tc" id="tc-exp">
+      <div class="card">
+        <h2>Export to index.html</h2>
+        <p style="font-size:.83rem;color:var(--ink2);line-height:1.6;margin-bottom:1rem;">
+          Copy the block below and replace the <code style="background:var(--bg);padding:.1rem .35rem;border-radius:4px;font-size:.77rem;">const problems=[...]</code> array in your <code style="background:var(--bg);padding:.1rem .35rem;border-radius:4px;font-size:.77rem;">index.html</code>.
+        </p>
+        <div style="position:relative;">
+          <div class="ebox" id="ebox">// No problems saved yet.</div>
+          <button class="cpbtn" style="top:.7rem;right:.7rem;" onclick="copyExp()">Copy all</button>
+        </div>
+        <div style="display:flex;gap:.65rem;margin-top:.9rem;flex-wrap:wrap;">
+          <button class="btn" onclick="dlExp()">⬇ Download .txt</button>
+          <button class="btn btn-ghost" onclick="renderExp()">Refresh</button>
+        </div>
+        <p class="hint" style="margin-top:.7rem;">
+          💡 In VS Code: Ctrl+H → search <code style="background:var(--bg);padding:.1rem .3rem;border-radius:3px;font-size:.75rem;">const problems=[</code> → replace the whole array.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── AUTH ──
+const CREDS = { u: 'sudarshan', p: 'lq2025admin' };
+
+function doLogin() {
+  const u = document.getElementById('lu').value.trim();
+  const p = document.getElementById('lp').value;
+  if (u === CREDS.u && p === CREDS.p) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    loadBank(); updateStats();
+  } else {
+    document.getElementById('lerr').classList.add('show');
+    document.getElementById('lp').value = '';
+  }
+}
+function logout() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('lu').value = '';
+  document.getElementById('lp').value = '';
+}
+
+// ── STATE ──
+let bank = [], sesCount = 0, mode = 'pdf', hosting = 'drive';
+let selFile = null, tagged = [];
+
+// ── TABS ──
+function switchTab(id, btn) {
+  document.querySelectorAll('.tc').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tc-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'exp') renderExp();
+  if (id === 'bank') renderBank();
+}
+
+function setMode(m, btn) {
+  mode = m;
+  document.querySelectorAll('.utab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('m-pdf').style.display = m === 'pdf' ? 'block' : 'none';
+  document.getElementById('m-text').style.display = m === 'text' ? 'block' : 'none';
+}
+
+// ── HOSTING SELECTOR ──
+function selectHosting(type, el) {
+  hosting = type;
+  document.querySelectorAll('.hopt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  ['drive','github','direct','none'].forEach(t => {
+    document.getElementById('hi-' + t).style.display = t === type ? 'block' : 'none';
+  });
+}
+
+// ── URL FORMATTERS ──
+function driveIdFromUrl(url) {
+  const m = url.match(/\/d\/([a-zA-Z0-9_-]{20,})/);
+  return m ? m[1] : null;
+}
+
+function onDriveInput(val) {
+  const prev = document.getElementById('prev-drive');
+  if (!val.trim()) { prev.className = 'url-preview'; return; }
+  const id = driveIdFromUrl(val);
+  if (id) {
+    const embedUrl = `https://drive.google.com/file/d/${id}/preview`;
+    const viewUrl  = `https://drive.google.com/file/d/${id}/view`;
+    prev.className = 'url-preview show';
+    prev.innerHTML = `✓ Embed URL: ${embedUrl}<br><span style="opacity:.7">View URL: ${viewUrl}</span>`;
+  } else if (val.includes('drive.google.com')) {
+    prev.className = 'url-preview warn show';
+    prev.textContent = '⚠ Could not extract file ID. Make sure you copied the full share link.';
+  } else {
+    prev.className = 'url-preview warn show';
+    prev.textContent = '⚠ This doesn\'t look like a Google Drive link.';
+  }
+}
+
+function onGithubInput(val) {
+  const prev = document.getElementById('prev-github');
+  if (!val.trim()) { prev.className = 'url-preview'; return; }
+  const filename = val.trim().replace(/^\//, '');
+  const url = `https://sudhirulz.github.io/LinguaQuest/pdfs/${filename}`;
+  prev.className = 'url-preview show';
+  prev.textContent = `✓ URL: ${url}`;
+}
+
+function onDirectInput(val) {
+  const prev = document.getElementById('prev-direct');
+  const tag  = document.getElementById('tag-direct');
+  if (!val.trim()) { prev.className = 'url-preview'; tag.style.display='none'; return; }
+  if (val.startsWith('https://') && val.endsWith('.pdf')) {
+    prev.className = 'url-preview show';
+    prev.textContent = `✓ ${val}`;
+    tag.textContent = 'Direct PDF ✓';
+    tag.className = 'url-tag direct';
+  } else if (val.startsWith('http')) {
+    prev.className = 'url-preview warn show';
+    prev.textContent = '⚠ URL does not end in .pdf — make sure this is a direct PDF link.';
+    tag.style.display = 'none';
+  }
+}
+
+// ── RESOLVE FINAL PDF URL ──
+function resolvePdfUrl() {
+  if (hosting === 'none') return '';
+  if (hosting === 'drive') {
+    const val = document.getElementById('url-drive').value.trim();
+    const id = driveIdFromUrl(val);
+    return id ? `https://drive.google.com/file/d/${id}/preview` : val;
+  }
+  if (hosting === 'github') {
+    const val = document.getElementById('url-github').value.trim().replace(/^\//, '');
+    return val ? `https://sudhirulz.github.io/LinguaQuest/pdfs/${val}` : '';
+  }
+  if (hosting === 'direct') {
+    return document.getElementById('url-direct').value.trim();
+  }
+  return '';
+}
+
+// ── FILE HANDLING ──
+function dzOver(e) { e.preventDefault(); e.currentTarget.classList.add('over'); }
+function dzLeave(e) { e.currentTarget.classList.remove('over'); }
+function dzDrop(e) {
+  e.preventDefault(); e.currentTarget.classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f?.type === 'application/pdf') setFile(f);
+}
+function fileSelect(e) { if (e.target.files[0]) setFile(e.target.files[0]); }
+function setFile(f) {
+  selFile = f;
+  const el = document.getElementById('fc');
+  el.textContent = '✓ ' + f.name + ' (' + (f.size/1024).toFixed(0) + ' KB)';
+  el.style.display = 'block';
+  // Auto-suggest filename for GitHub hosting
+  if (hosting === 'github') {
+    const inp = document.getElementById('url-github');
+    if (!inp.value) {
+      inp.value = f.name;
+      onGithubInput(f.name);
+    }
+  }
+}
+function b64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ── CATEGORISE ──
+async function doCategorise() {
+  const comp  = document.getElementById('comp').value || 'Various';
+  const year  = document.getElementById('year').value || 'Unknown';
+  const round = document.getElementById('round').value;
+  const pdfUrl = resolvePdfUrl();
+
+  if (mode === 'pdf' && !selFile) { alert('Please upload a PDF.'); return; }
+  if (mode === 'text' && !document.getElementById('ptxt').value.trim()) { alert('Please paste some problem text.'); return; }
+
+  setBusy(true);
+  setP(true, 10, 'Preparing…');
+  document.getElementById('rarea').style.display = 'none';
+  tagged = [];
+
+  try {
+    let problems;
+    if (mode === 'pdf') {
+      setP(true, 25, 'Reading PDF…');
+      const data = await b64(selFile);
+      problems = await claudePDF(data, comp, year, round);
+    } else {
+      setP(true, 25, 'Analysing text…');
+      problems = await claudeText(document.getElementById('ptxt').value.trim(), comp, year, round);
+    }
+    setP(true, 95, 'Done!');
+    tagged = problems.map((p, i) => ({ ...p, comp, year, pdfUrl, id: Date.now() + i }));
+    renderResults();
+    sesCount += tagged.length;
+    updateStats();
+    setTimeout(() => setP(false), 700);
+  } catch(err) {
+    setP(false);
+    alert('Error: ' + err.message);
+  } finally {
+    setBusy(false);
+  }
+}
+
+const TYPES = ['Morphology','Phonology','Syntax','Semantics','Writing Systems','Numerals','Kinship','Translation','Computational','Historical','Pragmatics','Mixed'];
+const SYS = `You are a linguistics olympiad expert. Analyse the given problems and return a JSON array. Each element:
+{"title":"short descriptive title","type":"one of [${TYPES.join(',')}]","difficulty":"Easy|Medium|Hard","skills":"2-4 specific skills, comma-separated","level":"Beginner|Intermediate|Advanced|All levels","reasoning":"1-2 sentences on type and difficulty","language":"language(s) featured"}
+Return ONLY valid JSON array. No markdown, no backticks.`;
+
+async function callClaude(messages) {
+  setP(true, 55, 'Claude is thinking…');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 4000, system: SYS, messages })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  setP(true, 85, 'Parsing…');
+  const raw = data.content.map(b => b.text || '').join('').trim();
+  try {
+    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    if (!Array.isArray(parsed)) throw new Error();
+    return parsed;
+  } catch { throw new Error('Unexpected response from Claude. Please try again.'); }
+}
+
+async function claudePDF(pdfB64, comp, year, round) {
+  return callClaude([{ role: 'user', content: [
+    { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: pdfB64 } },
+    { type: 'text', text: `This is the ${comp} ${year}${round?' '+round:''} problem booklet. Extract ALL individual problems and return the JSON array.` }
+  ]}]);
+}
+
+async function claudeText(text, comp, year, round) {
+  return callClaude([{ role: 'user', content:
+    `Competition: ${comp}, Year: ${year}${round?', Round: '+round:''}.\n\nProblem text:\n${text}\n\nExtract all individual problems and return the JSON array.`
+  }]);
+}
+
+// ── RENDER RESULTS ──
+function renderResults() {
+  document.getElementById('rarea').style.display = 'block';
+  const list = document.getElementById('rlist');
+  list.innerHTML = '';
+  tagged.forEach((p, i) => {
+    const dc = p.difficulty==='Easy'?'be':p.difficulty==='Hard'?'bh':'bm';
+    const entry = mkEntry(p, i);
+    const pdfNote = p.pdfUrl
+      ? `<span style="font-size:.73rem;color:var(--green);">✓ PDF: ${p.pdfUrl.length > 50 ? p.pdfUrl.slice(0,50)+'…' : p.pdfUrl}</span>`
+      : `<span style="font-size:.73rem;color:var(--ink3);">No PDF link</span>`;
+    const el = document.createElement('div');
+    el.className = 'ritem ok';
+    el.innerHTML = `
+      <div class="rhead">
+        <span class="rtitle">Problem ${i+1}: ${p.title}</span>
+        <span class="bdg bt">${p.type}</span>
+        <span class="bdg ${dc}">${p.difficulty}</span>
+        <span class="bdg bc">${p.comp} ${p.year}</span>
+        <button class="btn btn-ghost" style="margin-left:auto;font-size:.71rem;padding:.28rem .7rem;" onclick="addOne(${i})">+ Add</button>
+      </div>
+      <div class="rreason">${p.reasoning}</div>
+      <div style="font-size:.77rem;color:var(--ink3);margin-bottom:.4rem;">Skills: ${p.skills} · Language: ${p.language||'—'} · Level: ${p.level}</div>
+      ${pdfNote}
+      <div style="margin-top:.6rem;position:relative;">
+        <div class="rcode">${esc(entry)}</div>
+        <button class="cpbtn" onclick="cpText(this,\`${escJ(entry)}\`)">Copy</button>
+      </div>`;
+    list.appendChild(el);
+  });
+  list.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function mkEntry(p, i) {
+  const id = bank.length + i + 1;
+  return `  {id:${id},title:'${p.comp} ${p.year} — ${p.title}',comp:'${p.comp}',year:${isNaN(p.year)?`'${p.year}'`:p.year},type:'${p.type}',diff:'${p.difficulty}',lang:'${p.language||'Various'}',\n   pdf:'${p.pdfUrl||''}',sol:'',ext:''},`;
+}
+
+// ── BANK ──
+function loadBank() {
+  try { bank = JSON.parse(localStorage.getItem('lq_bank') || '[]'); } catch { bank = []; }
+}
+function saveBank() { localStorage.setItem('lq_bank', JSON.stringify(bank)); }
+
+function addOne(i) {
+  const p = tagged[i];
+  bank.push({ ...p, entry: mkEntry(p, i), addedAt: new Date().toISOString() });
+  saveBank(); updateStats();
+  alert(`✓ "${p.title}" added to bank.`);
+}
+function addAll() {
+  tagged.forEach((p, i) => bank.push({ ...p, entry: mkEntry(p, i), addedAt: new Date().toISOString() }));
+  saveBank(); updateStats();
+  alert(`✓ ${tagged.length} problem${tagged.length!==1?'s':''} added to bank.`);
+}
+
+function renderBank() {
+  const wrap = document.getElementById('btblwrap');
+  if (!bank.length) { wrap.innerHTML = '<div class="empty">No problems yet.</div>'; return; }
+  const dc = d => `<span class="bdg ${d==='Easy'?'be':d==='Hard'?'bh':'bm'}">${d}</span>`;
+  wrap.innerHTML = `<table class="btbl"><thead><tr><th>Title</th><th>Comp</th><th>Year</th><th>Type</th><th>Diff</th><th>PDF</th><th></th></tr></thead><tbody>
+    ${bank.map((p,i)=>`<tr>
+      <td><strong>${p.title||p.comp+' '+p.year}</strong></td>
+      <td><span class="bdg bc">${p.comp}</span></td>
+      <td>${p.year}</td>
+      <td><span class="bdg bt">${p.type}</span></td>
+      <td>${dc(p.difficulty)}</td>
+      <td style="font-size:.72rem;">${p.pdfUrl ? `<a href="${p.pdfUrl}" target="_blank" style="color:var(--violet);">↗ View</a>` : '<span style="color:var(--ink3);">—</span>'}</td>
+      <td><button class="delbtn" onclick="delOne(${i})">✕</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function delOne(i) { bank.splice(i,1); saveBank(); updateStats(); renderBank(); }
+function clearBank() { if(!confirm('Clear all?'))return; bank=[]; saveBank(); updateStats(); renderBank(); }
+
+// ── EXPORT ──
+function renderExp() {
+  document.getElementById('ebox').textContent = bank.length
+    ? 'const problems=[\n' + bank.map(p=>p.entry).join('\n') + '\n];'
+    : '// No problems saved yet.';
+}
+function copyExp() {
+  navigator.clipboard.writeText(document.getElementById('ebox').textContent);
+  const btn = document.querySelector('[onclick="copyExp()"]');
+  btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy all',2000);
+}
+function dlExp() {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([document.getElementById('ebox').textContent],{type:'text/plain'}));
+  a.download='lq_problems.txt'; a.click();
+}
+
+// ── STATS ──
+function updateStats() {
+  document.getElementById('st0').textContent = bank.length;
+  document.getElementById('st1').textContent = new Set(bank.map(p=>p.comp)).size;
+  document.getElementById('st2').textContent = new Set(bank.map(p=>p.type)).size;
+  document.getElementById('st3').textContent = sesCount;
+}
+
+// ── UTILS ──
+function setBusy(on) {
+  document.getElementById('catBtn').disabled = on;
+  document.getElementById('bIcon').innerHTML = on ? '<span class="spin"></span>' : '✦';
+  document.getElementById('bLbl').textContent = on ? 'Working…' : 'Categorise with Claude';
+}
+function setP(show, pct, lbl) {
+  document.getElementById('prog').classList.toggle('show', show);
+  if(pct!==undefined) document.getElementById('pbar').style.width = pct+'%';
+  if(lbl) document.getElementById('plbl').textContent = lbl;
+}
+function resetForm() {
+  document.getElementById('comp').value=''; document.getElementById('year').value='';
+  document.getElementById('round').value='';
+  ['url-drive','url-github','url-direct'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['prev-drive','prev-github','prev-direct'].forEach(id => { const el=document.getElementById(id); if(el) el.className='url-preview'; });
+  document.getElementById('ptxt').value='';
+  selFile=null; document.getElementById('fc').style.display='none';
+  document.getElementById('fi').value='';
+  document.getElementById('rarea').style.display='none';
+  setP(false);
+  selectHosting('drive', document.getElementById('hopt-drive'));
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escJ(s){return s.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$');}
+function cpText(btn,text){navigator.clipboard.writeText(text).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}
+</script>
+</body>
+</html>
