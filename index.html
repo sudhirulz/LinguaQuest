@@ -1309,7 +1309,7 @@ code{background:var(--bg);padding:.1rem .35rem;border-radius:4px;font-family:"Je
 
 <script>
 function runVisitorCounter(){const el=document.getElementById('visitor-count');const el2=document.getElementById('visitor-today');if(!el)return;const PAGE='sudhirulz.github.io/LinguaQuest';new Image().src=`https://visitor-badge.laobi.icu/badge?page_id=${PAGE}`;fetch(`https://visitor-badge.laobi.icu/badge?page_id=${PAGE}&format=json`).then(r=>r.json()).then(d=>{const n=parseInt(d.value||d.count||0);if(!n)throw new Error();let c=Math.max(n-60,0);const tick=()=>{c=Math.min(c+Math.ceil((n-c)/8+1),n);el.textContent=c.toLocaleString();if(c<n)requestAnimationFrame(tick);};requestAnimationFrame(tick);if(el2)el2.textContent='total visits';}).catch(()=>{el.innerHTML=`<img src="https://visitor-badge.laobi.icu/badge?page_id=${PAGE}" style="border-radius:4px;" alt="visitors">`;if(el2)el2.textContent='total visits';});}
-}
+
 
 async function renderGuestbook(){
   const panel=document.getElementById('fb-panel');
