@@ -2002,7 +2002,7 @@ async function renderGuestbook(){
       for(const ch of row){if(ch==='"')inQ=!inQ;else if(ch===','&&!inQ){fields.push(cur.trim());cur='';}else cur+=ch;}
       fields.push(cur.trim());
       const d=new Date((fields[0]||'').replace(/"/g,''));
-      return{date:isNaN(d.getTime())?'':d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),name:(fields[1]||'').replace(/"/g,'').trim(),from:(fields[2]||'').replace(/"/g,'').trim(),msg:(fields[3]||'').replace(/"/g,'').trim(),ok:(fields[4]||'').replace(/"/g,'').trim()==='✓'};
+      return{date:isNaN(d.getTime())?'':d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),name:(fields[1]||'').replace(/"/g,'').trim(),from:(fields[2]||'').replace(/"/g,'').trim(),msg:(fields[3]||'').replace(/"/g,'').trim(),ok:(fields[4]||'').replace(/"/g,'').trim().toUpperCase()==='TRUE'};
     }).filter(r=>r.ok&&r.name&&r.msg).reverse();
     if(!approved.length){panel.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--ink3);border:2px dashed var(--border);border-radius:12px;font-size:.84rem;">No messages yet — send some feedback!</div>';return;}
     panel.innerHTML=approved.map((e,i)=>{
