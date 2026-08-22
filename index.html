@@ -1258,7 +1258,7 @@ code{background:var(--bg);padding:.1rem .35rem;border-radius:4px;font-family:"Je
           <h2 style="font-family:'DM Serif Display',serif;font-size:1.35rem;color:#e0e7ff;margin:0;letter-spacing:-.01em;">What people are saying</h2>
           <span style="font-size:.68rem;font-family:'JetBrains Mono',monospace;background:rgba(129,140,248,.15);color:#a5b4fc;padding:.22rem .75rem;border-radius:999px;border:1px solid rgba(129,140,248,.3);">✦ live</span>
         </div>
-        <div id="fb-panel" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.9rem;">
+     <div id="fb-panel" style="display:flex;flex-direction:column;gap:.7rem;max-height:500px;overflow-y:auto;padding-right:.4rem;">
           <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#6366f1;font-size:.84rem;">Loading…</div>
         </div>
       </div>
@@ -2001,13 +2001,21 @@ async function renderGuestbook(){
       const fields=[];let cur='',inQ=false;
       for(const ch of row){if(ch==='"')inQ=!inQ;else if(ch===','&&!inQ){fields.push(cur.trim());cur='';}else cur+=ch;}
       fields.push(cur.trim());
-      const d=new Date((fields[0]||'').replace(/"/g,''));
-      return{date:isNaN(d.getTime())?'':d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),name:(fields[1]||'').replace(/"/g,'').trim(),from:(fields[2]||'').replace(/"/g,'').trim(),msg:(fields[3]||'').replace(/"/g,'').trim(),ok:(fields[4]||'').replace(/"/g,'').trim().toUpperCase()==='TRUE'};
+           const d=new Date((fields[0]||'').replace(/"/g,''));
+      const dateStr=isNaN(d.getTime())?'':d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+      const timeStr=isNaN(d.getTime())?'':d.toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit',hour12:true});
+      return{when:[dateStr,timeStr].filter(Boolean).join(' · '),name:(fields[1]||'').replace(/"/g,'').trim(),msg:(fields[3]||'').replace(/"/g,'').trim(),ok:(fields[4]||'').replace(/"/g,'').trim().toUpperCase()==='TRUE'};
     }).filter(r=>r.ok&&r.name&&r.msg).reverse();
-    if(!approved.length){panel.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--ink3);border:2px dashed var(--border);border-radius:12px;font-size:.84rem;">No messages yet — send some feedback!</div>';return;}
+    if(!approved.length){panel.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ink3);border:2px dashed var(--border);border-radius:12px;font-size:.84rem;">No messages yet — send some feedback!</div>';return;}
     panel.innerHTML=approved.map((e,i)=>{
       const[bg,accent]=palettes[i%palettes.length];
-      return`<div style="background:#fff;border:1.5px solid ${bg};border-radius:14px;padding:1.1rem 1.15rem;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .18s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''"><div style="position:absolute;"></div><div style="font-size:.92rem;color:var(--ink);line-height:1.6;margin-bottom:.7rem;">"${e.msg}"</div><div style="display:flex;align-items:center;gap:.5rem;"><div style="width:28px;height:28px;border-radius:50%;background:${bg};border:1.5px solid ${accent};display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:${accent};flex-shrink:0;">${e.name.charAt(0).toUpperCase()}</div><div style="flex:1;font-size:.78rem;font-weight:700;color:var(--ink);">${e.name}${e.from?' <span style="font-weight:400;color:var(--ink3);">· '+e.from+'</span>':''}</div>${e.date?'<div style="font-size:.63rem;color:var(--ink3);font-family:JetBrains Mono,monospace;">'+e.date+'</div>':''}</div></div>`;
+      return`<div style="background:${bg};border-left:4px solid ${accent};border-radius:10px;padding:.9rem 1.1rem;">
+        <div style="font-size:.92rem;color:var(--ink);line-height:1.6;margin-bottom:.5rem;">"${e.msg}"</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;">
+          <div style="font-size:.78rem;font-weight:700;color:${accent};">${e.name}</div>
+          <div style="font-size:.68rem;color:var(--ink3);font-family:'JetBrains Mono',monospace;">${e.when}</div>
+        </div>
+      </div>`;
     }).join('');
   }catch(err){console.warn('Feedback panel error:',err.message);panel.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:1.5rem;color:var(--ink3);font-size:.84rem;">Could not load messages.</div>';}
 }
